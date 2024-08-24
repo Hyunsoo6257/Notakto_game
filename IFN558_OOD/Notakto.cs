@@ -45,22 +45,58 @@ namespace IFN558_OOD
 
                 if (currentPlayer is HumanPlayer)
                 {
-                    Console.WriteLine("Enter your move (boardIndex cellIndex): ");
+                    Console.WriteLine("Enter your move (boardIndex row column): ");
                     string input = Console.ReadLine();
-                    string[] inputs = input.Split(' ');
-                    int boardIndex = int.Parse(inputs[0]);
-                    int cellIndex = int.Parse(inputs[1]);
 
+                    // Allow both space and comma as delimiters
+                    char[] separators = new char[] { ' ', ',' };
+                    string[] inputs = input.Split(separators, StringSplitOptions.RemoveEmptyEntries);
+
+                    // Check if the input is given in three parts
+                    if (inputs.Length != 3)
+                    {
+                        Console.WriteLine("Invalid input format. Please enter three numbers separated by a space or comma.");
+                        continue;
+                    }
+
+                    // Parse input into integers and validate
+                    if (!int.TryParse(inputs[0], out int boardIndex) ||
+                        !int.TryParse(inputs[1], out int row) ||
+                        !int.TryParse(inputs[2], out int column))
+                    {
+                        Console.WriteLine("Invalid input. Please enter valid numbers for boardIndex, row, and column.");
+                        continue;
+                    }
+
+                    // Adjust inputs to be 0-based index
+                    boardIndex -= 1; // Adjust boardIndex to 0-based
+                    row -= 1;        // Adjust row to 0-based
+                    column -= 1;     // Adjust column to 0-based
+
+                    int cellIndex = row * (int)Math.Sqrt(Size) + column;
+
+                    // Check if the input indices are within valid range
+                    if (boardIndex < 0 || boardIndex >= NumberOfBoards ||
+                        row < 0 || row >= Math.Sqrt(Size) ||
+                        column < 0 || column >= Math.Sqrt(Size))
+                    {
+                        Console.WriteLine("Invalid move, index out of range. Please try again.");
+                        continue;
+                    }
+
+
+                    // Check if the cell is valid and empty
                     if (IsVaildPlace(boardIndex, cellIndex))
                     {
                         currentPlayer.PlaceStone(Boards, boardIndex, cellIndex, GetStoneMark(IsFirstPlayerTurn));
                     }
                     else
                     {
-                        Console.WriteLine("Invalid move, please try again.");
+                        Console.WriteLine("Invalid move, the cell is already occupied. Please try again.");
                         continue;
                     }
                 }
+
                 else if (currentPlayer is ComputerPlayer)
                 {
                     currentPlayer.PlaceStone(Boards, 0, 0, GetStoneMark(IsFirstPlayerTurn));
