@@ -19,8 +19,8 @@ namespace IFN558_OOD
         public Stack<string[]> UndoStack { get; set; } = new Stack<string[]>();
         public Stack<string[]> RedoStack { get; set; } = new Stack<string[]>();
         public bool IsFirstPlayerTurn { get; set; }
-        protected IPlayer Player1;
-        protected IPlayer Player2;
+        public IPlayer? Player1 { get; set; }
+        public IPlayer? Player2 { get; set; }
 
         public Game(bool isNewGame = true, GameMode? mode = null)
         {
@@ -56,7 +56,7 @@ namespace IFN558_OOD
                         Player2 = new HumanPlayer("Player", false);
                         break;
                     default:
-                     Console.WriteLine("Invalid Input!!! Please retry.");
+                        Console.WriteLine("Invalid Input!!! Please retry.");
                         break;
 
                 }
@@ -75,22 +75,55 @@ namespace IFN558_OOD
         public abstract void InitializeGame();
         public abstract void Start();
         public abstract void PrintBoard();
-        public abstract bool IsVaildPlace(int boardIndex, int x, int y);
+        public abstract bool IsVaildPlace(int boardIndex, int cellIndex);
         public abstract bool IsGameOver();
         public abstract string GetWinner();
 
         public void Undo()
         {
-           
+            if (UndoStack.Count > 0)
+            {
+                RedoStack.Push((string[])UndoStack.Peek().Clone());
+                UndoStack.Pop();
+                IsFirstPlayerTurn = !IsFirstPlayerTurn;
+            }
+
+            else
+            {
+                Console.WriteLine("Undo is not available.");
+            }
         }
 
         public void Redo()
         {
+            if (RedoStack.Count > 0)
+            {
+                UndoStack.Push((string[])RedoStack.Peek().Clone());
+                RedoStack.Pop();
+                IsFirstPlayerTurn = !IsFirstPlayerTurn;
+            }
+            else
+            {
+                Console.WriteLine("Redo is not available.");
+            }
         }
 
         public string GetPlayerName(bool isFirstPlayerTurn)
         {
-           
+            if (Mode == GameMode.HumanVsHuman)
+            {
+                return isFirstPlayerTurn ? "Player 1" : "Player 2";
+
+            }
+            else if (Mode == GameMode.HumanVsComputer)
+            {
+                return isFirstPlayerTurn ? "Player" : "Computer";
+            }
+
+            else
+            {
+                return isFirstPlayerTurn ? "Computer" : "Player";
+            }
         }
     }
 

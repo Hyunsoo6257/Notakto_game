@@ -1,13 +1,13 @@
 ﻿using System;
 namespace IFN558_OOD
 {
-	public interface IPlayer
-	{
-		string Name { get; set; }
-		bool IsFirstPlayer { get; set; }
+    public interface IPlayer
+    {
+        string Name { get; set; }
+        bool IsFirstPlayer { get; set; }
 
-		void PlaceStone(string[] board, int boardIndex, int index, string stone);
-	}
+        void PlaceStone(string[] board, int boardIndex, int index, string stone);
+    }
 
     public class HumanPlayer : IPlayer
     {
@@ -22,7 +22,14 @@ namespace IFN558_OOD
 
         public void PlaceStone(string[] board, int boardIndex, int index, string stone)
         {
-            
+            if (board[index] == " ")
+            {
+                board[index] = stone;
+            }
+            else
+            {
+                Console.WriteLine("Invalid Move. The position is already occupied.");
+            }
         }
     }
 
@@ -39,7 +46,20 @@ namespace IFN558_OOD
 
         public void PlaceStone(string[] board, int boardIndex, int index, string stone)
         {
-            
+            Console.WriteLine("Computer is thinking...");
+
+            Random random = new Random();
+            bool emptySpotFound = false;
+
+            while (!emptySpotFound)
+            {
+                index = random.Next(0, board.Length);
+                if (board[index] == " ")
+                {
+                    board[index] = stone;
+                    emptySpotFound = true;
+                }
+            }
         }
     }
 
