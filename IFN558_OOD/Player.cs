@@ -22,9 +22,11 @@ namespace IFN558_OOD
 
         public void PlaceStone(string[] board, int boardIndex, int index, string stone)
         {
-            if (board[index] == " ")
+            // Calculate the correct index in the 1-dimensional array using boardIndex and cellIndex
+            int adjustedIndex = boardIndex * (int)Math.Sqrt(board.Length / 3) * (int)Math.Sqrt(board.Length / 3) + index;
+            if (board[adjustedIndex] == " ")
             {
-                board[index] = stone;
+                board[adjustedIndex] = stone;
             }
             else
             {
@@ -50,13 +52,17 @@ namespace IFN558_OOD
 
             Random random = new Random();
             bool emptySpotFound = false;
+            int boardSize = (int)Math.Sqrt(board.Length / 3); // Adjust for multiple boards
 
             while (!emptySpotFound)
             {
-                index = random.Next(0, board.Length);
-                if (board[index] == " ")
+                int randomRow = random.Next(0, boardSize);
+                int randomCol = random.Next(0, boardSize);
+                int adjustedIndex = boardIndex * boardSize * boardSize + randomRow * boardSize + randomCol;
+
+                if (board[adjustedIndex] == " ")
                 {
-                    board[index] = stone;
+                    board[adjustedIndex] = stone;
                     emptySpotFound = true;
                 }
             }

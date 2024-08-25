@@ -16,6 +16,7 @@ namespace IFN558_OOD
     public abstract class Game
     {
         public GameMode Mode { get; set; }
+        public string[] Boards { get; set; }
         public Stack<string[]> UndoStack { get; set; } = new Stack<string[]>();
         public Stack<string[]> RedoStack { get; set; } = new Stack<string[]>();
         public bool IsFirstPlayerTurn { get; set; }
@@ -26,6 +27,7 @@ namespace IFN558_OOD
         {
             IsFirstPlayerTurn = true;
 
+            // Initialize game mode and players
             if (isNewGame)
             {
                 Console.WriteLine("1. Human vs Human");
@@ -79,6 +81,7 @@ namespace IFN558_OOD
         public abstract bool IsGameOver();
         public abstract string GetWinner();
 
+  
         public void Undo()
         {
             if (UndoStack.Count > 0)
