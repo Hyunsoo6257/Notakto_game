@@ -27,7 +27,7 @@ namespace IFN558_OOD
 
         }
 
-        public override void Start()
+        public override void PlayGame()
         {
             Console.WriteLine("Starting Notakto game...");
             while (true)
@@ -54,7 +54,7 @@ namespace IFN558_OOD
 
                     // Check if the input is given in three parts
                     if (inputs.Length != 3)
-                    {
+                    {    
                         Console.WriteLine("Invalid input format. Please enter three numbers separated by a space or comma.");
                         continue;
                     }

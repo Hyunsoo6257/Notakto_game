@@ -30,7 +30,7 @@ namespace IFN558_OOD
             }
 
             currentGame.InitializeGame();
-            currentGame.Start();
+            currentGame.PlayGame();
         }
 
         public void LoadGame(Game? game) // game 매개변수도 nullable로 변경
@@ -43,7 +43,7 @@ namespace IFN558_OOD
 
             currentGame = game;
             Console.WriteLine("Game loaded successfully.");
-            currentGame.Start();
+            currentGame.PlayGame();
         }
 
         public void Exit()

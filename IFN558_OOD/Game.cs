@@ -75,7 +75,7 @@ namespace IFN558_OOD
         }
 
         public abstract void InitializeGame();
-        public abstract void Start();
+        public abstract void PlayGame();
         public abstract void PrintBoard();
         public abstract bool IsVaildPlace(int boardIndex, int cellIndex);
         public abstract bool IsGameOver();
