@@ -5,6 +5,7 @@ namespace IFN558_OOD
     public class GameManager
     {
         private Game? currentGame; // Nullable reference type으로 변경
+        private History gameHistory = new History();
 
         public GameManager()
         {
@@ -30,28 +31,36 @@ namespace IFN558_OOD
             }
 
             currentGame.InitializeGame();
-            currentGame.PlayGame();
+            currentGame.Start();
         }
 
-        public void LoadGame(Game? game) // game 매개변수도 nullable로 변경
+        public void LoadGame()
         {
-            if (game == null)
+            if (gameHistory.GetStateCount() > 0)
             {
-                Console.WriteLine("No saved game to load");
-                return;
+                Console.WriteLine("Loading the most recent saved game...");
+                string[] lastState = gameHistory.LoadState(gameHistory.GetStateCount() - 1);
+                bool isFirstPlayerTurn = gameHistory.LoadPlayerTurn(gameHistory.GetStateCount() - 1); // Assume this method exists
+                currentGame.LoadGameState(lastState, isFirstPlayerTurn); // Pass both state and turn
+                currentGame.Start();
             }
-
-            currentGame = game;
-            Console.WriteLine("Game loaded successfully.");
-            currentGame.PlayGame();
+            else
+            {
+                Console.WriteLine("No saved game to load.");
+            }
         }
 
         public void Exit()
         {
-            Console.WriteLine("Exiting the game. Thank you for playing!");
-            Environment.Exit(0);
-        }
+            if (currentGame != null)
+            {
+                Console.WriteLine("Saving current game state before exiting...");
+                gameHistory.SaveState(currentGame.GetCurrentState(), currentGame.IsFirstPlayerTurn); // Save both state and turn
+                Console.WriteLine("Exiting the game. Thank you for playing!");
+                Environment.Exit(0);
+            }
 
+        }
         public void Help()
         {
             Console.WriteLine("Available commands:");
@@ -86,7 +95,7 @@ namespace IFN558_OOD
 
 
                     case "load":
-                        LoadGame(currentGame);
+                        LoadGame();
                         break;
 
                     case "exit":

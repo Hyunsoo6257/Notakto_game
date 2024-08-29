@@ -26,7 +26,7 @@ namespace IFN558_OOD
             Console.WriteLine("Gomoku game initialized.");
         }
 
-        public override void PlayGame()
+        public override void Start()
         {
             Console.WriteLine("Starting Gomoku game...");
             while (true)

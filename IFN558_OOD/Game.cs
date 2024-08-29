@@ -17,11 +17,11 @@ namespace IFN558_OOD
     {
         public GameMode Mode { get; set; }
         public string[] Boards { get; set; }
-        public Stack<string[]> UndoStack { get; set; } = new Stack<string[]>();
-        public Stack<string[]> RedoStack { get; set; } = new Stack<string[]>();
         public bool IsFirstPlayerTurn { get; set; }
         public IPlayer? Player1 { get; set; }
         public IPlayer? Player2 { get; set; }
+        public Move GameMove { get; set; } = new Move(); // Manages move history for undo/redo
+        public History GameHistory { get; set; } = new History(); // Manages saving/loading game state
 
         public Game(bool isNewGame = true, GameMode? mode = null)
         {
@@ -75,41 +75,86 @@ namespace IFN558_OOD
         }
 
         public abstract void InitializeGame();
-        public abstract void PlayGame();
+        public abstract void Start();
         public abstract void PrintBoard();
         public abstract bool IsVaildPlace(int boardIndex, int cellIndex);
         public abstract bool IsGameOver();
         public abstract string GetWinner();
 
-  
-        public void Undo()
-        {
-            if (UndoStack.Count > 0)
-            {
-                RedoStack.Push((string[])UndoStack.Peek().Clone());
-                UndoStack.Pop();
-                IsFirstPlayerTurn = !IsFirstPlayerTurn;
-            }
 
-            else
-            {
-                Console.WriteLine("Undo is not available.");
-            }
+        // Saves the current game state to history before exit
+        public void SaveGameState()
+        {
+            GameHistory.SaveState((string[])Boards.Clone(), IsFirstPlayerTurn);
+            Console.WriteLine("Game state saved.");
         }
 
-        public void Redo()
+        // Loads the most recent saved state from history
+        public void LoadGameState(string[] savedState, bool isFirstPlayerTurn)
         {
-            if (RedoStack.Count > 0)
+            if (savedState != null && savedState.Length == Boards.Length)
             {
-                UndoStack.Push((string[])RedoStack.Peek().Clone());
-                RedoStack.Pop();
-                IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                Boards = savedState;
+                IsFirstPlayerTurn = isFirstPlayerTurn; // Directly set turn from the parameter
+                PrintBoard();
             }
             else
             {
-                Console.WriteLine("Redo is not available.");
+                Console.WriteLine("Loaded state is invalid or does not match the current game setup.");
             }
         }
+
+        protected string GetStoneMark(bool isFirstPlayerTurn)
+        {
+            return isFirstPlayerTurn ? "X" : "O";
+        }
+        // method to get the current state
+        public string[] GetCurrentState()
+        {
+            return (string[])Boards.Clone(); // Return a copy of the current board state
+        }
+
+        // Method to handle undo/redo operations
+        public void HandleUndoRedo(bool isUndo)
+        {
+            if (isUndo && GameMove.HasUndo())
+            {
+                int? lastMove = GameMove.Undo(); 
+
+                if (lastMove.HasValue)
+                {
+                    Boards[lastMove.Value] = " "; 
+                    PrintBoard(); 
+                    IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                }
+                else
+                {
+                    Console.WriteLine("No moves to undo.");
+                }
+            }
+            else if (!isUndo && GameMove.HasRedo())
+            {
+                int? nextMove = GameMove.Redo();
+
+                if (nextMove.HasValue)
+                {
+                    Boards[nextMove.Value] = GetStoneMark(IsFirstPlayerTurn);
+                    PrintBoard();
+                    IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                }
+                else
+                {
+                    Console.WriteLine("No moves to redo.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No more actions to undo/redo.");
+            }
+        }
+
+
+
 
         public string GetPlayerName(bool isFirstPlayerTurn)
         {

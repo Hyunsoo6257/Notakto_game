@@ -20,8 +20,10 @@ namespace IFN558_OOD
             {
                 int lastMove = moveStack.Pop(); // Remove the last move from the move stack
                 redoStack.Push(lastMove); // Save the undone move to the redo stack
+                Console.WriteLine($"Undoing move at position {lastMove}.");
                 return lastMove; // Return the undone move position
             }
+            Console.WriteLine("No moves to undo.");
             return null; // Return null if no moves are available to undo
         }
 
@@ -53,6 +55,14 @@ namespace IFN558_OOD
         public int? GetLastMove()
         {
             return moveStack.Count > 0 ? (int?)moveStack.Peek() : null; // Return the last move without removing it
+        }
+
+
+        // Clears both stacks (used when starting a new game)
+        public void ClearMoves()
+        {
+            moveStack.Clear();
+            redoStack.Clear();
         }
     }
 
