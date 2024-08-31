@@ -119,13 +119,15 @@ namespace IFN558_OOD
         {
             if (isUndo && GameMove.HasUndo())
             {
-                int? lastMove = GameMove.Undo(); 
+                int? lastMove = GameMove.Undo();
 
                 if (lastMove.HasValue)
                 {
-                    Boards[lastMove.Value] = " "; 
-                    PrintBoard(); 
-                    IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                    // Undo the move: remove the stone from the board
+                    Boards[lastMove.Value] = " ";
+                    PrintBoard();
+
+                    // Revert the player turn to the previous state
                 }
                 else
                 {
@@ -138,9 +140,11 @@ namespace IFN558_OOD
 
                 if (nextMove.HasValue)
                 {
+                    // Redo the move: place the stone back on the board
                     Boards[nextMove.Value] = GetStoneMark(IsFirstPlayerTurn);
                     PrintBoard();
-                    IsFirstPlayerTurn = !IsFirstPlayerTurn;
+
+                    // Advance the player turn
                 }
                 else
                 {
@@ -152,6 +156,7 @@ namespace IFN558_OOD
                 Console.WriteLine("No more actions to undo/redo.");
             }
         }
+
 
 
 

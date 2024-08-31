@@ -32,7 +32,7 @@ namespace IFN558_OOD
             Console.WriteLine("Starting Notakto game...");
             while (true)
             {
-                PrintBoard(); // 현재 보드 출력
+                PrintBoard(); // Display the current board
 
                 if (IsGameOver())
                 {
@@ -46,7 +46,7 @@ namespace IFN558_OOD
 
                 if (currentPlayer is HumanPlayer)
                 {
-                    bool moveConfirmed = false; // 플레이어가 돌을 확정했는지 여부
+                    bool moveConfirmed = false; // Whether the player has confirmed the move
 
                     while (!moveConfirmed)
                     {
@@ -70,7 +70,7 @@ namespace IFN558_OOD
                             continue;
                         }
 
-                        boardIndex -= 1; // 0-based 인덱스
+                        boardIndex -= 1; // Convert to 0-based index
                         row -= 1;
                         column -= 1;
 
@@ -86,10 +86,12 @@ namespace IFN558_OOD
 
                         if (IsVaildPlace(boardIndex, cellIndex))
                         {
+                            // Save the move before applying it
+                            GameMove.SaveMove(boardIndex * Size + cellIndex);
                             currentPlayer.PlaceStone(Boards, boardIndex, cellIndex, GetStoneMark(IsFirstPlayerTurn));
-                            PrintBoard(); // 현재 보드 상태 출력
+                            PrintBoard(); // Display the current board state
 
-                            // 플레이어에게 돌을 놓을지 Undo할지 선택하도록 묻기
+                            // Ask the player if they want to keep the move or undo
                             bool validChoice = false;
                             while (!validChoice)
                             {
@@ -98,14 +100,14 @@ namespace IFN558_OOD
 
                                 if (choice == "u")
                                 {
-                                    // Undo 로직 실행
-                                    HandleUndoRedo(true);
-                                    validChoice = true;
+                                    HandleUndoRedo(true); // Execute undo logic
+                                    validChoice = true;  // Set valid choice to true
+                                    moveConfirmed = false; // Reset move confirmation
                                 }
                                 else if (choice == "k")
                                 {
-                                    moveConfirmed = true; // 돌을 확정하고 다음 턴으로 넘어감
-                                    validChoice = true;
+                                    moveConfirmed = true; // Confirm the move
+                                    validChoice = true;   // Set valid choice to true
                                 }
                                 else
                                 {
@@ -118,16 +120,24 @@ namespace IFN558_OOD
                             Console.WriteLine("Invalid move, the cell is already occupied. Please try again.");
                         }
                     }
+
+                    // Only toggle turn after a move is confirmed to be kept
+                    if (moveConfirmed)
+                    {
+                        IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                    }
                 }
                 else if (currentPlayer is ComputerPlayer)
                 {
                     currentPlayer.PlaceStone(Boards, 0, 0, GetStoneMark(IsFirstPlayerTurn));
-                }
+                    PrintBoard(); // Display the current board state
 
-                // 플레이어 턴 변경
-                IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                    // Toggle turn after the computer's move
+                    IsFirstPlayerTurn = !IsFirstPlayerTurn;
+                }
             }
         }
+
 
 
         public override void PrintBoard()

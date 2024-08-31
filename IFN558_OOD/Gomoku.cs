@@ -144,9 +144,5 @@ namespace IFN558_OOD
             return true;
         }
 
-        private string GetStoneMark(bool isFirstPlayerTurn)
-        {
-            return isFirstPlayerTurn ? "X" : "O";
-        }
     }
 }
