@@ -12,22 +12,26 @@ namespace IFN558_OOD
             currentGame = null; // null 할당 허용
         }
 
-        public void NewGame(string mode)
+        public void NewGame()
         {
             Console.WriteLine("Starting a new game...");
+            Console.WriteLine("Please choose a game mode:");
+            Console.WriteLine("1. Notakto");
+            Console.WriteLine("2. Gomoku");
 
-            if (mode.Equals("Notakto", StringComparison.OrdinalIgnoreCase))
+            string? choice = Console.ReadLine();
+
+            switch (choice)
             {
-                currentGame = new Notakto();
-            }
-            else if (mode.Equals("Gomoku", StringComparison.OrdinalIgnoreCase))
-            {
-                currentGame = new Gomoku();
-            }
-            else
-            {
-                Console.WriteLine("Unknown game mode. Please choose either 'Notakto' of 'Gomoku'.");
-                return;
+                case "1":
+                    currentGame = new Notakto();
+                    break;
+                case "2":
+                    currentGame = new Gomoku();
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please choose either '1' for Notakto or '2' for Gomoku.");
+                    return; // Exit the method if an invalid choice is made
             }
 
             currentGame.InitializeGame();
@@ -64,7 +68,7 @@ namespace IFN558_OOD
         public void Help()
         {
             Console.WriteLine("Available commands:");
-            Console.WriteLine("new [game mode] - Start a new game of the specified mode (Notakto or Gomoku).");
+            Console.WriteLine("new - Start a new game.");
             Console.WriteLine("load - Load the most recent saved game.");
             Console.WriteLine("exit - Exit the game.");
             Console.WriteLine("help - Show this help message.");
@@ -83,14 +87,7 @@ namespace IFN558_OOD
                 switch (commands[0])
                 {
                     case "new":
-                        if (commands.Length > 1)
-                        {
-                            NewGame(commands[1]);
-                        }
-                        else
-                        {
-                            Console.WriteLine("Please specify the game mode (Notakto or Gomoku).");
-                        }
+                        NewGame(); // Call the updated NewGame method without parameters
                         break;
 
 
